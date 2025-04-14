@@ -1,7 +1,7 @@
 # Puck_Buzzer-0.2
 A advanced new version with Dashboard on [Bangle.js 2](https://www.espruino.com/Bangle.js2)
 
-# what's new here
+# What's new here
 1. Leaderboard on Bangle.js
 
 - Tracks who buzzed first
