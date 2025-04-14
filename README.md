@@ -1,5 +1,5 @@
 # Puck_Buzzer-0.2
-A advanced new version with Dashboard
+A advanced new version with Dashboard on Bangle.js
 
 1. Leaderboard on Bangle.js
 
@@ -17,7 +17,8 @@ Each Puck.js has a unique name like "QuizBuzzer1", "QuizBuzzer2", etc.
 Puck.js sends: { buzz: true, name: "Puck A" }
 Bangle.js tracks the order people buzzed in.
 
-
+# IDE
+https://www.espruino.com/ide/
 
 
 
