@@ -17,6 +17,7 @@ A advanced new version with Dashboard on with [Bangle.js 2](https://www.espruino
 Each Puck.js has a unique name like "QuizBuzzer1", "QuizBuzzer2", etc.
 Puck.js sends: { buzz: true, name: "Puck A" }
 Bangle.js tracks the order people buzzed in.
+(since Banglejs have a limitation here, it connect only 2 puck at a time)
 
 # IDE
 https://www.espruino.com/ide/
