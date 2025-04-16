@@ -3,10 +3,8 @@ g.clear();
 g.setFont("6x8", 2);
 
 let buzzedList = [];
-let isListening = false;
 
 // Decode DataView to String
-
 function decodeBLEString(dataView) {
   let s = "";
   for (let i = 0; i < dataView.byteLength; i++) {
@@ -15,9 +13,9 @@ function decodeBLEString(dataView) {
   return s;
 }
 
+// Display buzz order
 function updateDisplay() {
   g.clear();
-  g.setFont("6x8", 2);
   g.drawString("📋 Buzz Order:", 10, 10);
   buzzedList.forEach((name, i) => {
     g.drawString((i + 1) + ". " + name, 10, 30 + i * 20);
@@ -27,8 +25,7 @@ function updateDisplay() {
   }
 }
 
-// Sound and vibration pattern
-
+// Sound & vibration feedback
 function alertForRank(rank) {
   if (rank === 0) {
     Bangle.buzz(500);
@@ -39,44 +36,42 @@ function alertForRank(rank) {
   }
 }
 
-// Start BLE scan for all Puck.js devices
-
-NRF.requestDevice({ filters: [{ namePrefix: "Puck" }], timeout: 20000 }).then(device => {
-  return device.gatt.connect();
-}).then(gatt => {
-  return gatt.getPrimaryService("6e400001-b5a3-f393-e0a9-e50e24dcca9e");
-}).then(service => {
-  return service.getCharacteristic("6e400003-b5a3-f393-e0a9-e50e24dcca9e");
-}).then(characteristic => {
-  characteristic.on('characteristicvaluechanged', function(event) {
-    let value = decodeBLEString(event.target.value);
-    try {
-      let msg = JSON.parse(value);
-      if (msg.buzz && msg.name) {
-        if (!buzzedList.includes(msg.name)) {
-          buzzedList.push(msg.name);
-          alertForRank(buzzedList.length - 1);
-          updateDisplay();
+// Scan and connect
+function scanForBuzzers() {
+  NRF.requestDevice({ filters: [{ namePrefix: "Puck" }], timeout: 20000 })
+    .then(device => device.gatt.connect())
+    .then(gatt => gatt.getPrimaryService("6e400001-b5a3-f393-e0a9-e50e24dcca9e"))
+    .then(service => service.getCharacteristic("6e400003-b5a3-f393-e0a9-e50e24dcca9e"))
+    .then(characteristic => {
+      characteristic.on('characteristicvaluechanged', event => {
+        let value = decodeBLEString(event.target.value);
+        try {
+          let msg = JSON.parse(value);
+          if (msg.buzz && msg.name && !buzzedList.includes(msg.name)) {
+            buzzedList.push(msg.name);
+            alertForRank(buzzedList.length - 1);
+            updateDisplay();
+          }
+        } catch (e) {
+          print("Parse error:", value);
         }
-      }
-    } catch (e) {
-      print("JSON Error:", value);
-    }
-  });
-  return characteristic.startNotifications();
-}).catch(err => {
-  g.clear();
-  g.drawString("Connection error:", 10, 30);
-  g.drawString(err.toString(), 10, 50);
-});
+      });
+      return characteristic.startNotifications();
+    })
+    .catch(err => {
+      g.clear();
+      g.drawString("⚠️ Connect error:", 10, 30);
+      g.drawString(err.toString(), 10, 50);
+    });
+}
 
-// Reset leaderboard on button
-
+// Reset round
 setWatch(() => {
   buzzedList = [];
   updateDisplay();
+  scanForBuzzers();
 }, BTN, { repeat: true, edge: "rising", debounce: 50 });
 
-// Show initial screen
-
+// Start first scan
 updateDisplay();
+scanForBuzzers();
