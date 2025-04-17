@@ -21,7 +21,9 @@ Bangle.js tracks the order people buzzed in.
 
 - Problem: 
 -Bangle.js (Central) can only connect to one (Fully operational) BLE Peripheral (i.e., Puck.js) at a time.
+
 -It works well with 1–2 devices, but simultaneous interactions with 3+ Pucks is unreliable, especially if kids buzz fast.
+
 -BLE scanning + connecting takes ~1s, so tight competition gets clunky.
 
 # IDE
