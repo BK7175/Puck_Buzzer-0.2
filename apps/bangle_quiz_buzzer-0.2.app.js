@@ -8,7 +8,7 @@ let buzzedList = [];
 function decodeBLEString(dataView) {
   let s = "";
   for (let i = 0; i < dataView.byteLength; i++) {
-    s += String.fromCharCode(dataView.getUint8(i));
+    s += String.fromCharCode(dataView.getUint8(i)); 
   }
   return s;
 }
